@@ -1,0 +1,15 @@
+[package]
+name = "erdos287-verifier"
+version = "0.1.0"
+edition = "2021"
+description = "Exact u128 interval verifier, p-adic carry SAT/CDCL solver, ablation suite, and 10^8 sieve certificate generator for Erdős Problem #287"
+
+[dependencies]
+rayon = "1.10"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1

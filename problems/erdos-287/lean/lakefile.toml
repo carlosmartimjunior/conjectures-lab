@@ -1,0 +1,12 @@
+name = "erdos287"
+version = "0.1.0"
+defaultTargets = ["Erdos287"]
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "v4.35.0"
+
+[[lean_lib]]
+name = "Erdos287"
+moreLeanArgs = ["-j1", "-M4500"]

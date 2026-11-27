@@ -1,0 +1,14 @@
+# Lean 4 / Lake build caches
+.lake/
+*.olean
+*.ilean
+*.c.trace
+
+# Rust build artifacts
+target/
+Cargo.lock
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.swp
