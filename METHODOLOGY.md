@@ -1,24 +1,26 @@
-# Padrão de Rigor e Honestidade Científica
+# Rigor & Scientific Honesty Standards
 
-**Navegação:** [Início](README.md) · **Padrão de Rigor** · [Erdős #287](problems/erdos-287/README.md)
+**Language:** **English** · [Português](pt/METHODOLOGY.md)
+
+**Navigation:** [Home](README.md) · **Rigor & Methodology** · [Erdős #287](problems/erdos-287/README.md)
 
 ---
 
-Este repositório segue cinco regras inegociáveis para garantir que quem utilizar este material saiba **exatamente** o que está provado e o que permanece em aberto:
+This repository enforces five non-negotiable standards so that anyone using this material knows **precisely** what is proved and what remains open:
 
-1. **Distinção estrita entre prova incondicional, prova condicional e evidência computacional:**
-   - Uma redução condicional (ex.: *se a hipótese $H$ valer, então a conjectura vale*) **nunca** é rotulada como "prova da conjectura".
-   - Uma verificação computacional finita (mesmo até $10^8$) prova apenas o intervalo finito testado — nunca o caso geral $\forall n$.
+1. **Strict separation between unconditional proofs, conditional reductions, and finite computation:**
+   - A conditional reduction (*if hypothesis $H$ holds, then the conjecture holds*) is **never** labeled as a full proof of the conjecture.
+   - A finite computational search (even up to $10^8$) proves only the tested finite range — never the universal statement $\forall n$.
 
-2. **Aritmética exata em verificadores computacionais:**
-   - Nenhum caso é descartado por heurística ou tolerância de ponto flutuante (`f64`). Toda eliminação por soma usa aritmética intervalar inteira exata (ex.: ponto fixo em `u128` com cotas inferior/superior) ou critérios puramente racionais/inteiros.
+2. **Exact arithmetic in computational verifiers:**
+   - No candidate interval is eliminated using floating-point tolerances (`f64`). All sum-based eliminations use exact integer interval arithmetic (e.g., fixed-point `u128` lower/upper bounds) or purely rational/integer criteria.
 
-3. **Auditoria estrita em Lean 4:**
-   - Todo módulo formalizado publicado aqui compila sem `sorry`, sem `axiom` customizado e sem `native_decide` (`Lean.ofReduceBool`).
-   - Os únicos axiomas transitivos aceitos em `#print axioms` são os três axiomas padrão do Lean/Mathlib: `propext`, `Classical.choice` e `Quot.sound`.
+3. **Strict Lean 4 kernel audit:**
+   - Every published Lean 4 module compiles with **zero `sorry`**, **zero custom `axiom`**, and **zero `native_decide`** (`Lean.ofReduceBool` is strictly forbidden).
+   - The only permitted transitive axioms in `#print axioms` are the three standard Lean/Mathlib axioms: `propext`, `Classical.choice`, and `Quot.sound`.
 
-4. **Registro transparente de barreiras e rotas descartadas:**
-   - Quando uma linha de ataque falha ou esbarra em um problema clássico em aberto (como a barreira de paridade de crivos ou existência de pseudo-soluções locais), documentamos a demonstração da barreira em `BARRIERS.md` para poupar tempo de outros pesquisadores.
+4. **Transparent reporting of barriers and discarded routes:**
+   - Whenever an attack hits a fundamental open barrier (such as the Selberg parity barrier or local-global pseudo-solutions), we document the barrier proof explicitly in `BARRIERS.md` to save time for future researchers.
 
-5. **Reprodutibilidade completa:**
-   - Todos os certificados JSON, instâncias SAT/SMT, código-fonte Rust e arquivos Lean 4 são versionados junto com os comandos exatos para recompilar e reexecutar tudo do zero.
+5. **Full reproducibility:**
+   - All JSON certificates, SAT/SMT instances, Rust verifier source code, and portable Lean 4 files are versioned alongside exact commands to rebuild and re-verify everything from scratch.

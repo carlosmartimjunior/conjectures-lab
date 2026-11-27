@@ -1,25 +1,27 @@
-# Erdős #287 — Laboratório Computacional (Rust `u128` + SAT/SMT)
+# Erdős #287 — Computational Lab (Rust `u128` + SAT/SMT)
 
-**Abas:** [Início](../../README.md) · [Proposição](README.md) · [Estado da Arte](STATUS.md) · [Contribuição](CONTRIBUTION.md) · **Computacional** · [Lean 4](LEAN.md) · [Barreiras](BARRIERS.md) · [Como Colaborar](OPEN_QUESTIONS.md)
+**Language:** **English** · [Português](pt/COMPUTATIONAL.md)
+
+**Tabs:** [Home](../../README.md) · [Proposition](README.md) · [State of the Art](STATUS.md) · [Contribution](CONTRIBUTION.md) · **Computational** · [Lean 4](LEAN.md) · [Barriers](BARRIERS.md) · [Collaborate](OPEN_QUESTIONS.md)
 
 ---
 
-Todo o motor computacional reside em [rust-verifier/](rust-verifier/) (Rust puro com `rayon` e aritmética intervalar inteira exata em `u128` na escala $2^{96}$, **zero `f64`** nas provas de eliminação).
+The entire computational engine lives in [rust-verifier/](rust-verifier/) (pure Rust with `rayon` and exact `u128` fixed-point interval arithmetic at scale $2^{96}$, **zero `f64`** in exclusion proofs).
 
-## 1. Resultados Verificados
+## 1. Verified Results
 
-| Experimento | Escopo | Resultado Exato | Certificado |
+| Experiment | Scope | Exact Result | Certificate |
 | :--- | :--- | :--- | :--- |
-| **Sanity Checks** | $\{2,3,6\}$, $\{2,4,6,12\}$, $\{2,3,7,42\}$ sem `gap <= 2` | **100% sobrevivem** (ausência de falsos positivos no propagador `u128` e no solver `sat-m1`) | Testes unitários (`cargo test`) |
-| **Concordância Exata** | Todos os intervalos candidatos com $b \le 2\,000$ | **464.286** intervalos testados, **`0` sobreviventes** (`0,21s`) | Testes unitários |
-| **Varredura Exaustiva até $10^8$** | Todo $4 \le b \le 100\,000\,000$ | **`0` sobreviventes** em **`0,61s`**: **16 pares universais** (64 blocos racionais) cobrem $68 \le b \le 10^8$; $4 \le b \le 67$ ($496$ intervalos) eliminados por propagação `u128` | [verify_100m_summary.json](certificates/verify_100m_summary.json) |
-| **Ablação `M1` (só $p \le 13$)** | $b \le 6\,000$ (`4.183.383` intervalos) | **4.117.211 sobreviventes** ($98{,}4\%$) — confirma que primos pequenos não bastam | [ablation_report.json](certificates/ablation_report.json) |
-| **Ablação `M2` (só $p^r > b/2$)** | $b \le 6\,000$ (`4.183.383` intervalos) | **2.994.529 sobreviventes** ($71{,}6\%$) | [ablation_report.json](certificates/ablation_report.json) |
-| **Ablação `M3` (SEM Sophie Germain)** | $b \le 10^7$, proibindo $(c_1, c_2) \in \{(1,2),(2,1)\}$ | **Cobertura universal contígua a partir de $b = 87$ até $10^7$** | [ablation_report.json](certificates/ablation_report.json) |
-| **Ablação `M4` (Motor completo)** | $b \le 6\,000$ (`4.183.383` intervalos) | **`0` sobreviventes** | [ablation_report.json](certificates/ablation_report.json) |
-| **Solver SAT `M1` (*carry* completo $\bmod\, p^R$)** | $p \le 13$, tolerância $10^{-5}$ ($1.143$ intervalos) | **58 pseudo-soluções explícitas encontradas** (ex.: $42$ elementos em $[18, 80]$ com soma $\approx 1{,}000003755$) | [ablation_report.json](certificates/ablation_report.json) · [.smt2](certificates/m1_instance_46_180.smt2) · [.cnf](certificates/m1_instance_46_180.cnf) |
+| **Sanity Checks** | $\{2,3,6\}$, $\{2,4,6,12\}$, $\{2,3,7,42\}$ without `gap <= 2` | **100% survive** (no false positives in `u128` propagator or `sat-m1` solver) | Unit tests (`cargo test`) |
+| **Exact Baseline Concordance** | All candidate intervals with $b \le 2\,000$ | **464,286** intervals tested, **`0` survivors** (`0.21s`) | Unit tests |
+| **Exhaustive Verification up to $10^8$** | All $4 \le b \le 100\,000\,000$ | **`0` survivors** in **`0.61s`**: **16 universal pairs** (64 rational blocks) cover $68 \le b \le 10^8$; $4 \le b \le 67$ ($496$ intervals) eliminated by `u128` propagation | [verify_100m_summary.json](certificates/verify_100m_summary.json) |
+| **Ablation `M1` ($p \le 13$ only)** | $b \le 6\,000$ (`4,183,383` intervals) | **4,117,211 survivors** ($98.4\%$) — confirms small primes are insufficient | [ablation_report.json](certificates/ablation_report.json) |
+| **Ablation `M2` ($p^r > b/2$ only)** | $b \le 6\,000$ (`4,183,383` intervals) | **2,994,529 survivors** ($71.6\%$) | [ablation_report.json](certificates/ablation_report.json) |
+| **Ablation `M3` (NO Sophie Germain)** | $b \le 10^7$, forbidding $(c_1, c_2) \in \{(1,2),(2,1)\}$ | **Contiguous universal cover from $b = 87$ to $10^7$** | [ablation_report.json](certificates/ablation_report.json) |
+| **Ablation `M4` (Full engine)** | $b \le 6\,000$ (`4,183,383` intervals) | **`0` survivors** | [ablation_report.json](certificates/ablation_report.json) |
+| **SAT Solver `M1` (full carry $\bmod\, p^R$)** | $p \le 13$, tolerance $10^{-5}$ ($1,143$ intervals) | **58 explicit pseudo-solutions found** (e.g., $42$ elements in $[18, 80]$ summing to $\approx 1.000003755$) | [ablation_report.json](certificates/ablation_report.json) · [.smt2](certificates/m1_instance_46_180.smt2) · [.cnf](certificates/m1_instance_46_180.cnf) |
 
-## 2. Como Reproduzir do Zero
+## 2. How to Reproduce from Scratch
 
 ```bash
 cd problems/erdos-287/rust-verifier
@@ -30,4 +32,4 @@ cargo run --release -- sat-m1 --b 180 --max-p 13
 cargo run --release -- export-lean-cert --max-b 20000 --max-m 6
 ```
 
-*(Nota no Windows com toolchain `x86_64-pc-windows-gnu`: se o caminho do repositório contiver caracteres acentuados, defina `CARGO_TARGET_DIR` para um caminho ASCII antes de rodar `cargo`.)*
+*(Windows note for `x86_64-pc-windows-gnu`: if your workspace path contains non-ASCII characters, point `CARGO_TARGET_DIR` to an ASCII path before running `cargo`.)*
